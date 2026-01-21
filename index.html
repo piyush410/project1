@@ -2,33 +2,103 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>DevOps Task Manager</title>
-    <style>
-        body { font-family: Arial; text-align: center; background: #f4f4f4; }
-        .container { margin-top: 50px; background: white; padding: 20px; display: inline-block; border-radius: 10px; }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevOps Task Manager | Professional Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body>
-    <div class="container">
-        <h1>Task List</h1>
-        <div id="tasks">Loading tasks from Backend...</div>
+<body class="bg-gray-50 font-sans">
+
+    <nav class="bg-blue-600 p-4 shadow-lg text-white">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold tracking-tight">
+                <i class="fas fa-server mr-2"></i> DevOps Task Manager
+            </h1>
+            <span class="bg-blue-500 px-3 py-1 rounded-full text-sm">
+                Status: <span id="env-badge" class="font-mono">Connecting...</span>
+            </span>
+        </div>
+    </nav>
+
+    <div class="container mx-auto mt-10 px-4 max-w-2xl">
+        <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
+            <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+                <h2 class="text-xl font-semibold text-gray-800">Deployment Pipeline Tasks</h2>
+                <button onclick="fetchTasks()" class="text-blue-600 hover:rotate-180 transition-transform duration-500">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+
+            <div class="p-6">
+                <div id="tasks-container" class="space-y-4">
+                    <div class="flex flex-col items-center justify-center py-10 text-gray-400">
+                        <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600 mb-2"></div>
+                        <p>Fetching tasks from backend...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gray-50 p-4 text-center text-xs text-gray-500 border-t border-gray-100 uppercase tracking-widest">
+                System Connected via Docker & Nginx
+            </div>
+        </div>
     </div>
 
     <script>
-        // DevOps engineer is URL ko change karke production URL dalega
-        const API_URL = "http://localhost:5000/api/tasks";
+        // Professional tip: Port 5001 use karein kyunki 5000 par Nginx chal raha hoga
+        const API_URL = "http://localhost:5001/api/tasks";
 
-        fetch(API_URL)
-            .then(res => res.json())
-            .then(data => {
-                let html = "<ul>";
-                data.tasks.forEach(t => { html += `<li>${t.title}</li>`; });
-                html += "</ul>";
-                document.getElementById('tasks').innerHTML = html;
-            })
-            .catch(err => {
-                document.getElementById('tasks').innerHTML = "<b style='color:red'>Backend Not Reachable!</b>";
-            });
+        async function fetchTasks() {
+            const container = document.getElementById('tasks-container');
+            const envBadge = document.getElementById('env-badge');
+
+            try {
+                const response = await fetch(API_URL);
+                if (!response.ok) throw new Error("Network Error");
+                
+                const data = await response.json();
+                
+                // Update Environment Badge
+                envBadge.innerText = data.environment || "Production";
+                
+                // Clear and Render Tasks
+                let html = "";
+                data.tasks.forEach(task => {
+                    html += `
+                        <div class="flex items-center p-4 bg-gray-50 rounded-lg border border-gray-200 hover:border-blue-300 transition-colors shadow-sm">
+                            <div class="h-8 w-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-bold mr-4">
+                                ${task.id}
+                            </div>
+                            <div class="flex-grow">
+                                <p class="text-gray-700 font-medium">${task.title}</p>
+                            </div>
+                            <div>
+                                <span class="px-3 py-1 text-xs rounded-full ${task.done ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}">
+                                    ${task.done ? 'Completed' : 'Pending'}
+                                </span>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+
+            } catch (err) {
+                container.innerHTML = `
+                    <div class="bg-red-50 border border-red-200 text-red-600 p-4 rounded-lg flex items-center">
+                        <i class="fas fa-exclamation-triangle mr-3"></i>
+                        <div>
+                            <p class="font-bold">Backend Not Reachable!</p>
+                            <p class="text-sm">Make sure your Flask container is running on port 5001.</p>
+                        </div>
+                    </div>
+                `;
+                envBadge.innerText = "Offline";
+                envBadge.classList.add('text-red-300');
+            }
+        }
+
+        // Initial Load
+        fetchTasks();
     </script>
 </body>
 </html>
