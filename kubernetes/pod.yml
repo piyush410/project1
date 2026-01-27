@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: dev
+  namespace: developer-side-code
+spec:
+  containers:
+  - name: devopsweb
+    image: piyush410/my-backend:v2
+    ports:
+    - containerPort: 80
+
