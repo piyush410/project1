@@ -8,6 +8,7 @@ metadata:
 spec:
   ingressClassName: nginx 
   rules:
+  - host : "piyush.local" #this is dummy domain name 
   - http:
       paths:
       - path: /
@@ -24,3 +25,5 @@ spec:
             name: my-nodeport-service 
             port:
               number: 80
+
+# Since you don't have a domain, we use a placeholder like piyush.local. You can access this by mapping your Minikube/Node IP to this name in your /etc/hosts file.
