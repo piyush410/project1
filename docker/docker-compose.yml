@@ -16,7 +16,7 @@ services:
   backend:
     build: .
     ports:
-      - "5001:5000" # Change host port to 5001 to avoid conflict
+      - "5001:5000" 
     environment:
       - APP_ENV=Production
       - DATABASE_URL=postgresql://user:password@db:5432/devops_db
@@ -26,7 +26,7 @@ services:
   frontend:
     image: nginx:alpine
     ports:
-      - "80:80" # Standard web port for frontend
+      - "80:80" 
     volumes:
       - ./index.html:/usr/share/nginx/html/index.html:ro
     depends_on:
