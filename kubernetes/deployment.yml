@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dev-deployment
+  namespace: developer-side-code
+  labels:
+    app: devc
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: devc
+  template:
+    metadata:
+      labels:
+        app: devc
+    spec:
+      containers:
+      - name: devopsweb
+        image: piyush410/my-backend:v2
+        ports:
+        - containerPort: 5000
