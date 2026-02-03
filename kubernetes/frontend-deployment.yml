@@ -4,7 +4,7 @@ metadata:
   name: frontend-deployment
   namespace: developer-side-code
 spec:
-  replicas: 1
+  replicas: 1 # this is optinal because i use HPA mean Horizontal pod Autoscaling
   selector:
     matchLabels:
       app: frontend-app
